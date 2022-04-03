@@ -9,6 +9,7 @@ class RolesSchema extends Schema {
       table.increments()
       table.string('nombre', 80).notNullable()
       table.string('descripcion', 150).notNullable()
+      table.string('status',50).notNullable()
       table.timestamps()
     })
   }

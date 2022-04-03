@@ -32,5 +32,5 @@ Route.group(()=>{
   Route.get('/user', 'Controllers/UserController.index');
   Route.put('/user/:id', 'Controllers/UserController.update');
   Route.delete('/user/:id', 'Controllers/UserController.destroy');
-}).middleware('auth')
+}).middleware('auth').prefix('Users')
 

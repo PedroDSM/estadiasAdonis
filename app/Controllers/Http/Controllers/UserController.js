@@ -1,6 +1,11 @@
 'use strict'
 
 const User = use('App/Models/User')
+const { validateAll } = use('Validator')
+
+const storeUser = use('App/Validators/storeUser')
+const validaciones = new storeUser()
+
 
 class UserController {
 
@@ -14,44 +19,40 @@ class UserController {
     }
 
     async update({ params, request, response }){
-        const nombre = request.input('nombre')
-        const roles_id = request.input('roles_id')
-        const email = request.input('email')
-        const password = request.input('password')
-
+        const userdata = request.only(User.store)
         let user =  await User.find(params.id)
-
-        user.nombre = nombre
-        user.roles_id = roles_id
-        user.email = email
-        user.password = password
-
+        try {
+        user.merge(userdata)
         await user.save()
+
         return response.status(201).send({
             usuario: user,
             message:"Usuario Modificado Correctamente"
-        })
+        })}catch (e) {
+            return response.status(400).send({
+                message:"Ha Ocurrido Un Error"
+            })}
     }
 
     async store ({ request, response, auth }){
-        const nombre = request.input('nombre')
-        const roles_id = request.input('roles_id')
-        const email = request.input('email')
-        const password = request.input('password')
+        try{
+        const valid = await validateAll( request.only(User.store), validaciones.rules, validaciones.messages)
+        if(valid.fails()){
+            return response.status(401).send({message:valid.messages()})
+        }
+        const userdata = request.only(User.store)
+        const user = await User.create(userdata)
 
-        const user = new User()
-        user.nombre = nombre
-        user.roles_id = roles_id
-        user.email = email
-        user.password = password
-
-        await user.save()
-        let accesToken = await auth.generate(user)
-        return response.status(201).send({
-            usuario: user,
-            message:"Usuario Creado Correctamente",
-            access_token: accesToken
-        })
+            let accesToken = await auth.generate(user)
+            return response.status(201).send({
+                usuario: user,
+                message:"Usuario Creado Correctamente",
+                access_token: accesToken
+            })}catch (e) {
+                return response.status(400).send({
+                    message:"Ha Ocurrido Un Error"
+                })}
+        
     }
 
     async destroy ({ params, request, response}){
@@ -68,11 +69,11 @@ class UserController {
             if (await auth.attempt(email,password)){
                 let user = await User.findBy('email', email)
                 let accesToken = await auth.generate(user)
-                return response.json({"message":"Logueado Exitosamente", "user":user, "access_token": accesToken})
+                return response.status(200).send({"message":"Logueado Exitosamente", "user":user, "access_token": accesToken})
             }
         } catch (e) {
-            return response.status(500).send({
-                message:"Necesitas Registrarte"
+            return response.status(400).send({
+                Fail:"Email o Password Equivocados"
             })
         }
     }

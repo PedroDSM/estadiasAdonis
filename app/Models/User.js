@@ -7,6 +7,12 @@ const Model = use('Model')
 const Hash = use('Hash')
 
 class User extends Model {
+
+  static get table () {
+    return 'users'
+  }
+
+  
   static boot () {
     super.boot()
 
@@ -34,6 +40,14 @@ class User extends Model {
   tokens () {
     return this.hasMany('App/Models/Token')
   }
+  static get store(){
+    return['nombre', 
+    'roles_id = 4', 
+    'email', 
+    'password', 
+    'status = active'
+  ]
+}
 }
 
 module.exports = User

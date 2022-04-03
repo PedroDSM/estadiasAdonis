@@ -11,16 +11,17 @@ class RoleController {
         })
     }
     async store ({ request, response}){
-        const nombre = request.input('nombre')
-        const descripcion = request.input('descripcion')
 
-        const roles = new Rol()
-        roles.nombre = nombre
-        roles.descripcion = descripcion
+        const roladata = request.only(Rol.store)
 
-        await roles.save()
+        await Rol.create(roladata)
+        // const roles = new Rol()
+        // roles.nombre = nombre
+        // roles.descripcion = descripcion
+
+        // await roles.save()
         return response.status(201).send({
-            Roles: roles,
+            Roles: roladata,
             message:"Rol Creado Correctamente",
         })
     }
@@ -34,14 +35,11 @@ class RoleController {
      }
 
      async update({ params, request, response }){
-        const nombre = request.input('nombre')
-        const descripcion = request.input('descripcion')
+        const roladata = request.only(Rol.store)
 
         let roles =  await Rol.find(params.id)
 
-        roles.nombre = nombre
-        roles.descripcion = descripcion
-
+        roles.merge(roladata)
         await roles.save()
         return response.status(201).send({
             Roles: roles,
