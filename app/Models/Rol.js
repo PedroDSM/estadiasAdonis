@@ -14,7 +14,7 @@ class Rol extends Model {
         return [
             'nombre',
             'descripcion',
-            'status = Active'
+            'status'
         ]
     }
 }

@@ -18,6 +18,13 @@ class UserController {
          
     }
 
+    async show({params, response}){
+        let user = await User.find(params.id)
+        return response.status(200).send({
+            usuario: user,
+        })
+    }
+
     async update({ params, request, response }){
         const userdata = request.only(User.store)
         let user =  await User.find(params.id)
@@ -30,7 +37,7 @@ class UserController {
             message:"Usuario Modificado Correctamente"
         })}catch (e) {
             return response.status(400).send({
-                message:"Ha Ocurrido Un Error"
+                Fail:"Ha Ocurrido Un Error"
             })}
     }
 
@@ -44,13 +51,10 @@ class UserController {
         const user = await User.create(userdata)
 
             let accesToken = await auth.generate(user)
-            return response.status(201).send({
-                usuario: user,
-                message:"Usuario Creado Correctamente",
-                access_token: accesToken
+            return response.status(201).send({"message":"Usuario Creado Exitosamente", "user":user, "token": accesToken
             })}catch (e) {
                 return response.status(400).send({
-                    message:"Ha Ocurrido Un Error"
+                    Fail:"Ha Ocurrido Un Error"
                 })}
         
     }
@@ -63,19 +67,30 @@ class UserController {
         })
     }
     async login ({ request, auth, response}) {
-        const email = request.input("email")
-        const password = request.input("password");
-        try {
-            if (await auth.attempt(email,password)){
-                let user = await User.findBy('email', email)
-                let accesToken = await auth.generate(user)
-                return response.status(200).send({"message":"Logueado Exitosamente", "user":user, "access_token": accesToken})
-            }
-        } catch (e) {
-            return response.status(400).send({
-                Fail:"Email o Password Equivocados"
-            })
-        }
+        const userdata = request.only(User.login)
+
+        let user = await User.findBy('email', userdata.email)
+        let accesToken = await auth.withRefreshToken().generate(user)
+
+        return response.status(200).send({"message":"Logueado Exitosamente", "user":user, "token": accesToken})
+
+    }
+    async logout({ auth, response }){
+        const refreshToken = User.accesToken
+       try {
+        await auth
+        .authenticator('jwt')
+        .revokeTokens([refreshToken], true)
+        return response.status(200).send({
+            message:"Sesion Terminada"
+        })
+       } catch (e) {
+        return response.status(400).send({
+            Fail:"No Se Logro Cerrar Sesion",
+            error: e.code
+        })
+       } 
+
     }
 }
 

@@ -42,11 +42,16 @@ class User extends Model {
   }
   static get store(){
     return['nombre', 
-    'roles_id = 4', 
+    'roles_id' , 
     'email', 
     'password', 
-    'status = active'
+    'status'
   ]
+}
+static get login(){
+  return[
+  'email', 
+  'password' ]
 }
 }
 

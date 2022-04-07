@@ -30,7 +30,9 @@ Route.group(()=>{
 
 Route.group(()=>{
   Route.get('/user', 'Controllers/UserController.index');
+  Route.get('/user/:id', 'Controllers/UserController.show');
   Route.put('/user/:id', 'Controllers/UserController.update');
   Route.delete('/user/:id', 'Controllers/UserController.destroy');
+  Route.get('logout', 'Controllers/UserController.logout');
 }).middleware('auth').prefix('Users')
 
