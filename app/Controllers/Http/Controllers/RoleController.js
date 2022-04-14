@@ -10,6 +10,18 @@ class RoleController {
             Roles: roles,
         })
     }
+    async show({response, params}){
+        const rol =  await Rol.find(params.id)
+        if( rol == null){
+            return response.status(400).send({
+                message: "Rol No Encontrado",
+            })
+        }else{
+            return response.status(200).send({
+                Roles: rol,
+            })
+        }      
+    }
     async store ({ request, response}){
 
         const roladata = request.only(Rol.store)

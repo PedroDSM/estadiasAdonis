@@ -6,9 +6,10 @@ const { description } = require('@adonisjs/ace/lib/commander')
 const Model = use('Model')
 
 class Rol extends Model {
-    rol () {
-        return this.hasOne('App/Models/Rol')
-    }
+
+    static get table () {
+        return 'rols'
+      }
 
     static get store(){
         return [

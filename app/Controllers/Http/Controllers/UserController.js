@@ -18,11 +18,28 @@ class UserController {
          
     }
 
-    async show({params, response}){
-        let user = await User.find(params.id)
-        return response.status(200).send({
-            usuario: user,
-        })
+    async show({auth, response}){
+        try {
+            const user = await auth.getUser()
+            response.status(200).send({
+                usuario:user
+            })
+          } catch (error) {
+            response.status(400).send('Missing or invalid jwt token')
+          }
+    }
+
+    async view({response, params}){
+        const us =  await User.find(params.id)
+        if( us == null){
+            return response.status(400).send({
+                message: "User No Encontrado",
+            })
+        }else{
+            return response.status(200).send({
+                user: us,
+            })
+        }      
     }
 
     async update({ params, request, response }){

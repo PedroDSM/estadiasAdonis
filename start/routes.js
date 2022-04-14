@@ -22,15 +22,17 @@ Route.post('/auth/register', 'Controllers/UserController.store');
 Route.post('/auth/login', 'Controllers/UserController.login');
 
 Route.group(()=>{
-  Route.get('/rol', 'Controllers/RoleController.index');
+  Route.get('/roles', 'Controllers/RoleController.index');
+  Route.get('/rol/:id', 'Controllers/RoleController.show');
   Route.post('/rol', 'Controllers/RoleController.store');
   Route.put('/rol/:id', 'Controllers/RoleController.update');
   Route.delete('/rol/:id', 'Controllers/RoleController.destroy');
 }).prefix('Roles')
 
 Route.group(()=>{
-  Route.get('/user', 'Controllers/UserController.index');
-  Route.get('/user/:id', 'Controllers/UserController.show');
+  Route.get('/users', 'Controllers/UserController.index');
+  Route.get('/user', 'Controllers/UserController.show');
+  Route.get('/user/:id', 'Controllers/UserController.view');
   Route.put('/user/:id', 'Controllers/UserController.update');
   Route.delete('/user/:id', 'Controllers/UserController.destroy');
   Route.get('logout', 'Controllers/UserController.logout');

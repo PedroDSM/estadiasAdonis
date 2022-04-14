@@ -40,6 +40,9 @@ class User extends Model {
   tokens () {
     return this.hasMany('App/Models/Token')
   }
+  rol () {
+    return this.hasOne('App/Models/Rol')
+}
   static get store(){
     return['nombre', 
     'roles_id' , 
