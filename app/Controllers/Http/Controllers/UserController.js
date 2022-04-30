@@ -9,9 +9,11 @@ const validaciones = new storeUser()
 
 class UserController {
 
-    async index ({request, response}){
+    async index ({response}){
 
-        const users = await User.all()
+        const users = await User.query()
+        .with('rol')
+        .fetch()
         return response.status(200).send({
             usuario: users,
         })
@@ -67,7 +69,7 @@ class UserController {
         const userdata = request.only(User.store)
         const user = await User.create(userdata)
 
-            let accesToken = await auth.generate(user)
+            let accesToken = await auth.withRefreshToken().generate(user)
             return response.status(201).send({"message":"Usuario Creado Exitosamente", "user":user, "token": accesToken
             })}catch (e) {
                 return response.status(400).send({
@@ -76,12 +78,23 @@ class UserController {
         
     }
 
-    async destroy ({ params, request, response}){
-       const user =  await User.find(params.id)
-       await user.delete()
-        return response.status(200).send({
-            message:"Usuario Eliminado Correctamente"
-        })
+     async destroy({params, response}) {
+        try {
+          const US =  await User.findOrFail(params.id)
+          let mensaje = ""
+          if(US.status){ mensaje = "Status InActivo" }
+          if(!US.status){ mensaje = "Status Activo" }
+          US.status = !US.status 
+          await US.save()
+          return response.status(200).send({
+            usuario: US,
+            mensaje:mensaje
+          })
+          }catch (e) {
+            return response.status(400).send({
+                Fail:"No Se Logro Cambiar El Status",
+                error: e.code})
+      }
     }
     async login ({ request, auth, response}) {
         const userdata = request.only(User.login)

@@ -11,9 +11,9 @@ class VistasSchema extends Schema {
       table.string('icono', 150).notNullable()
       table.string('nivel', 80).notNullable()
       table.string('ruta', 150).notNullable()
-      table.string('categoria',50).notNullable()
       table.string('status',50).notNullable()
       table.timestamps()
+
     })
   }
 

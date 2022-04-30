@@ -41,11 +41,12 @@ class User extends Model {
     return this.hasMany('App/Models/Token')
   }
   rol () {
-    return this.hasOne('App/Models/Rol')
+    return this.hasOne('App/Models/Rol', 'roles_id', 'id')
 }
   static get store(){
-    return['nombre', 
-    'roles_id' , 
+    return[
+    'nombre', 
+    'roles_id', 
     'email', 
     'password', 
     'status'

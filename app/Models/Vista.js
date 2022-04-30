@@ -7,6 +7,25 @@ class Vista extends Model {
     static get table () {
         return 'vistas'
       }
+
+      static get store(){
+        return[
+        'nombre', 
+        'icono' , 
+        'nivel', 
+        'categorias',
+        'ruta', 
+        'status'
+      ]
+    }
+    roles() {
+      return this.belongsToMany('App/Models/Rol')
+      .pivotTable('vista_roles')
+    }
+    categoria () {
+      return this.belongsTo('App/Models/Categoria', 'categorias', 'id')
+    }
+  
 }
 
 module.exports = Vista

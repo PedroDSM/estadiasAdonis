@@ -7,6 +7,7 @@ const Model = use('Model')
 
 class Rol extends Model {
 
+    
     static get table () {
         return 'rols'
       }
@@ -18,6 +19,17 @@ class Rol extends Model {
             'status'
         ]
     }
+    
+    vistas() {
+      return this.belongsToMany('App/Models/Vista')
+      .pivotTable('vista_roles')
+    }
+
+    categorias () {
+      return this.manyThrough('App/Models/Vista', 'categorias')
+    }
+  
+  
 }
 
 module.exports = Rol
